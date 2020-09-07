@@ -1,6 +1,6 @@
 # calculator 
 
-A basic calculator. <a href="https://anascnm.github.io/calculator//" rel="nofollow">LIVE DEMO</a>
+A basic calculator. <a href="https://anascnm.github.io/calculator/" rel="nofollow">LIVE DEMO</a>
 
 # Built using :
 
