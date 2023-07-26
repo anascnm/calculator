@@ -1,107 +1,29 @@
-let runningTotal = 0;
-let buffer = "0";
-let previousOperator;
+const display = document.querySelector(".display");
+const buttons = document.querySelectorAll("button");
+const specialChars = ["%", "*", "/", "-", "+", "="];
+let output = "";
 
-const screen = document.querySelector('.screen'); 
+//Define function to calculate based on button clicked.
+const calculate = (btnValue) => {
+  display.focus();
+  if (btnValue === "=" && output !== "") {
+    //If output has '%', replace with '/100' before evaluating.
+    output = eval(output.replace("%", "/100"));
+  } else if (btnValue === "AC") {
+    output = "";
+  } else if (btnValue === "DEL") {
+    //If DEL button is clicked, remove the last character from the output.
+    output = output.toString().slice(0, -1);
+  } else {
+    //If output is empty and button is specialChars then return
+    if (output === "" && specialChars.includes(btnValue)) return;
+    output += btnValue;
+  }
+  display.value = output;
+};
 
-function buttonClick(value) {
-    if (isNaN(value)) {
-        // this is not a number
-        handleSymbol(value);
-    } else {
-        // this is a number
-        handleNumber(value);
-    }
-    screen.innerText = buffer;
-
-}
-
-function handleSymbol(symbol) {
-   // if (symbol === 'C') {
-   //   buffer = '0';
-   //  runningTotal = 0;
-   // }
-
-    switch (symbol) {
-        case 'C':
-        buffer = '0';
-        runningTotal = 0;
-        break;
-    case '=':
-        if (previousOperator === null) {
-            // you need two numbers to do math
-            return;
-        }
-        flushOperation(parseInt(buffer));
-        previousOperator = null;
-        buffer = runningTotal;
-        runningTotal = 0;
-        break;
-    case '←':
-        if(buffer.length === 1) {
-            buffer = '0';
-        } else {
-            buffer = buffer.substring(buffer.length - 1);
-        }
-        break;
-    case  '+':
-    case  '˗':
-    case  '×':
-    case  '÷':
-    
-        handleMath(symbol);
-        break; 
-
-    }
-
-}
-
-function handleMath(symbol) {
-    if (buffer === '0' ) {
-        // do nothing
-    return;
-    }
-
-    const intBuffer = parseInt(buffer);
-
-    if (runningTotal === 0) {
-        runningTotal = intBuffer;
-    } else {
-        flushOperation(intBuffer);
-    }
-
-    previousOperator = symbol; 
-
-    buffer = '0';
-}
-
-function flushOperation(intBuffer) {
-    if (previousOperator === '+') {
-        runningTotal += intBuffer;
-    } else if (previousOperator === '-') {
-        runningTotal -= intBuffer;
-    }else if (previousOperator === '&times') {
-        runningTotal *= intBuffer;
-    } else {
-        runningTotal /= intBuffer;
-    }
-}
-
-function handleNumber(numberString) {
-    if  (buffer === "0") {
-        buffer = numberString;
-    } else {
-        buffer += numberString;
-    }
-}
-
-    
-function init () {
-    document.querySelector('.calc-buttons')
-    .addEventListener('click', function(event) {
-        buttonClick(event.target.innerText);
-        
-    })
-}
-
-init();
+//Add event listener to buttons, call calculate() on click.
+buttons.forEach((button) => {
+  //Button click listener calls calculate() with dataset value as argument.
+  button.addEventListener("click", (e) => calculate(e.target.dataset.value));
+});
